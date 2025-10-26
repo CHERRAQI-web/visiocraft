@@ -1,0 +1,121 @@
+/* src/components/Sidebar.css */
+
+/* Définit la couleur de fond principale pour l'effet de découpe */
+:root {
+  --main-bg: #f8fafc; /* slate-50 */
+}
+
+/* Style pour le lien ACTIF avec l'effet de coin concave */
+.link-active {
+  /* Couleur de fond pour le lien actif */
+  background-color: white;
+  color: #1e293b; /* slate-800 */
+  font-weight: 600;
+  box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.1);
+
+  /* 
+    LA MAGIE OPÈRE ICI !
+    On utilise 'clip-path' pour découper la forme.
+    Le polygon trace les points du rectangle avec une encoche au milieu à droite.
+  */
+  clip-path: polygon(
+    0 0,        /* Coin supérieur gauche */
+    100% 0,      /* Coin supérieur droit */
+    100% 35%,    /* Début de l'encoche supérieure */
+    calc(100% - 15px) 50%, /* Point le plus profond de l'encoche */
+    100% 65%,    /* Fin de l'encoche inférieure */
+    100% 100%,   /* Coin inférieur droit */
+    0 100%       /* Coin inférieur gauche */
+  );
+
+  /* On s'assure que le lien dépasse un peu pour que la coupe soit visible */
+  margin-right: -1rem; 
+  padding-right: calc(1rem + 1rem); /* Compense le margin négatif */
+  border-radius: 0.5rem;
+  border-top-right-radius: 0;
+  border-bottom-right-radius: 0;
+}
+
+/* Style pour les liens inactifs */
+.link-inactive {
+  color: white; /* slate-300 */
+  border-radius: 0.5rem;
+  transition: all 0.2s ease-in-out;
+}
+
+.link-inactive:hover {
+  background-color: #81E6D9; /* slate-700 */
+  color: white;
+}
+
+/* Styles spécifiques pour mobile */
+@media (max-width: 768px) {
+  /* Style pour les liens actifs sur mobile */
+  .link-active {
+    background-color: #0ea5e9; /* sky-500 - plus visible sur mobile */
+    color: white;
+    box-shadow: 0 4px 12px rgba(14, 165, 233, 0.4); /* Ombre colorée pour plus de visibilité */
+    
+    /* Simplification du clip-path pour mobile */
+    clip-path: none;
+    margin-right: 0;
+    padding-right: 1rem;
+    border-radius: 0.5rem;
+    
+    /* Ajout d'une bordure pour plus de visibilité */
+    border-left: 4px solid #0284c7; /* sky-600 */
+  }
+  
+  /* Style pour les liens inactifs sur mobile */
+  .link-inactive {
+    background-color: transparent;
+    color: rgba(255, 255, 255, 0.8);
+    border-radius: 0.5rem;
+    border-left: 4px solid transparent;
+    transition: all 0.2s ease-in-out;
+  }
+  
+  /* Effet de survol pour mobile (tactile) */
+  .link-inactive:hover, .link-inactive:focus {
+    background-color: rgba(255, 255, 255, 0.1);
+    color: white;
+    border-left-color: rgba(14, 165, 233, 0.5);
+  }
+  
+  /* Effet de clic pour mobile */
+  .link-inactive:active {
+    background-color: rgba(255, 255, 255, 0.2);
+    transform: scale(0.98);
+  }
+  
+  /* Centrer les icônes et textes sur mobile */
+  .link-active, .link-inactive {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    padding: 0.75rem 1rem;
+  }
+  
+  /* Cacher le label sur mobile si la barre latérale est fermée */
+  .sidebar-label {
+    display: none; /* Hide label on smaller screens */
+  }
+}
+
+/* Animation pour le changement de page */
+@keyframes linkPulse {
+  0% {
+    transform: scale(1);
+  }
+  50% {
+    transform: scale(1.05);
+  }
+  100% {
+    transform: scale(1);
+  }
+}
+
+/* Appliquer l'animation lors du changement de page */
+.link-active {
+  animation: linkPulse 0.3s ease-in-out;
+}
