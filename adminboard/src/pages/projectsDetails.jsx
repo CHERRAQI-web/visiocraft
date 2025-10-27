@@ -40,7 +40,7 @@ const ProjectDetails = () => {
         setError(null);
 
         const response = await axios.get(
-          `http://localhost:8080/api/projects/${projectId}`,
+          `http://backend-visiocraft-production.up.railway.app/api/projects/${projectId}`,
           {
             withCredentials: true,
           }
@@ -73,7 +73,7 @@ const ProjectDetails = () => {
 
     try {
       const response = await axios.put(
-        `http://localhost:8080/api/projects/${projectId}/assign`,
+        `http://backend-visiocraft-production.up.railway.app/api/projects/${projectId}/assign`,
         { freelancer_id: freelancerId }, // Request body
         { withCredentials: true }
       );

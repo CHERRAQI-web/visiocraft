@@ -37,7 +37,7 @@ const ProjectManagement = () => {
           params.append('status', filterStatus);
         }
 
-        const response = await axios.get(`http://localhost:8080/api/projects/?${params}`, {
+        const response = await axios.get(`https://backend-visiocraft-production.up.railway.app/api/projects/?${params}`, {
           withCredentials: true,
         });
 
@@ -81,7 +81,7 @@ const ProjectManagement = () => {
         )
       );
 
-      await axios.put(`http://localhost:8080/api/projects/${projectId}`, { status: newStatus }, {
+      await axios.put(`https://backend-visiocraft-production.up.railway.app/api/projects/${projectId}`, { status: newStatus }, {
         withCredentials: true,
       });
     } catch (error) {

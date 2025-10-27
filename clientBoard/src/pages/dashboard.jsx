@@ -112,7 +112,7 @@ const Dashboard = () => {
 
         console.log("Attempting to fetch projects (with HttpOnly cookie)...");
 
-        const response = await axios.get('http://localhost:8080/api/projects', {
+        const response = await axios.get('https://backend-visiocraft-production.up.railway.app/api/projects', {
           withCredentials: true,
         });
 
@@ -208,7 +208,7 @@ const Dashboard = () => {
         return newStats;
       });
       
-      await axios.put(`http://localhost:8080/api/projects/${projectId}`, { status: newStatus });
+      await axios.put(`https://backend-visiocraft-production.up.railway.app/api/projects/${projectId}`, { status: newStatus });
     } catch (error) {
       setError("Failed to update project status. Refreshing data...");
       console.error("Update error:", error);
@@ -217,41 +217,41 @@ const Dashboard = () => {
   };
 
   // Handle project deletion
-  const deleteProject = async (projectId) => {
-    if (!window.confirm("Are you sure you want to delete this project?")) return;
+  // const deleteProject = async (projectId) => {
+  //   if (!window.confirm("Are you sure you want to delete this project?")) return;
     
-    try {
-      const projectToDelete = projects.find(p => p._id === projectId);
+  //   try {
+  //     const projectToDelete = projects.find(p => p._id === projectId);
       
-      setProjects(prevProjects => prevProjects.filter(p => p._id !== projectId));
+  //     setProjects(prevProjects => prevProjects.filter(p => p._id !== projectId));
       
-      // Update stats if we have them from API
-      if (projectToDelete) {
-        setStats(prevStats => {
-          const newStats = { ...prevStats };
-          newStats.total = Math.max(0, newStats.total - 1);
+  //     // Update stats if we have them from API
+  //     if (projectToDelete) {
+  //       setStats(prevStats => {
+  //         const newStats = { ...prevStats };
+  //         newStats.total = Math.max(0, newStats.total - 1);
           
-          // Decrement status count
-          switch(projectToDelete.status) {
-            case 'pending_assignment': newStats.pending = Math.max(0, newStats.pending - 1); break;
-            case 'assigned': newStats.assigned = Math.max(0, newStats.assigned - 1); break;
-            case 'in-progress': newStats.inProgress = Math.max(0, newStats.inProgress - 1); break;
-            case 'review': newStats.review = Math.max(0, newStats.review - 1); break;
-            case 'completed': newStats.completed = Math.max(0, newStats.completed - 1); break;
-            case 'cancelled': newStats.cancelled = Math.max(0, newStats.cancelled - 1); break;
-          }
+  //         // Decrement status count
+  //         switch(projectToDelete.status) {
+  //           case 'pending_assignment': newStats.pending = Math.max(0, newStats.pending - 1); break;
+  //           case 'assigned': newStats.assigned = Math.max(0, newStats.assigned - 1); break;
+  //           case 'in-progress': newStats.inProgress = Math.max(0, newStats.inProgress - 1); break;
+  //           case 'review': newStats.review = Math.max(0, newStats.review - 1); break;
+  //           case 'completed': newStats.completed = Math.max(0, newStats.completed - 1); break;
+  //           case 'cancelled': newStats.cancelled = Math.max(0, newStats.cancelled - 1); break;
+  //         }
           
-          return newStats;
-        });
-      }
+  //         return newStats;
+  //       });
+  //     }
       
-      await axios.delete(`http://localhost:8080/api/projects/${projectId}`);
-    } catch (error) {
-      setError("Failed to delete project. Refreshing data...");
-      console.error("Delete error:", error);
-      refreshProjects();
-    }
-  };
+  //     await axios.delete(`https://backend-visiocraft-production.up.railway.app/api/projects/${projectId}`);
+  //   } catch (error) {
+  //     setError("Failed to delete project. Refreshing data...");
+  //     console.error("Delete error:", error);
+  //     refreshProjects();
+  //   }
+  // };
 
   // Loading state
   if (loading) {

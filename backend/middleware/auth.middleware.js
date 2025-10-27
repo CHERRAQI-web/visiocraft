@@ -1,4 +1,3 @@
-// middleware/authMiddleware.js
 import dotenv from "dotenv";
 import jwt from "jsonwebtoken";
 import User from '../models/user.models.js'; // Import the User model

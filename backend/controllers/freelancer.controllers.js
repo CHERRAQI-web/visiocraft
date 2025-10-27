@@ -1,9 +1,10 @@
 import mongoose from 'mongoose';
 import User from '../models/user.models.js';
 import Freelancer from '../models/freelancer.models.js';
-import Skill from '../models/skill.models.js'; // <--- 1. IMPORT THE SKILL MODEL
+import Skill from '../models/Skill.models.js'; 
 import bcrypt from 'bcryptjs';
 
+// Register Freelancer
 // Register Freelancer
 export const registerFreelancer = async (req, res) => {
     const { first_name, last_name, email, password, confirmPassword, portfolio_url, skills, bio } = req.body;
@@ -14,6 +15,26 @@ export const registerFreelancer = async (req, res) => {
     }
     if (password !== confirmPassword) {
         return res.status(400).json({ message: "Passwords do not match." });
+    }
+
+    // Validate email format
+    const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
+    if (!emailRegex.test(email)) {
+        return res.status(400).json({ message: 'Please provide a valid email address.' });
+    }
+
+    // Validate password strength
+    if (password.length < 8) {
+        return res.status(400).json({ message: 'Password must be at least 8 characters long.' });
+    }
+
+    // Validate portfolio URL if provided
+    if (portfolio_url) {
+        try {
+            new URL(portfolio_url);
+        } catch (err) {
+            return res.status(400).json({ message: 'Please provide a valid portfolio URL.' });
+        }
     }
 
     let session;
@@ -44,30 +65,37 @@ export const registerFreelancer = async (req, res) => {
 
         const userId = newUser[0]._id;
 
-        // Validate and create skills
+        // Validate skills
         if (!Array.isArray(skills) || skills.length === 0) {
+            await session.abortTransaction();
+            session.endSession();
             return res.status(400).json({ message: 'At least one skill is required.' });
         }
 
-        // Clean skill names and validate their existence
+        // Clean skill names
         const skillNames = skills.map(skill => skill.trim().toLowerCase());
-        const validSkills = await Skill.find({ name: { $in: skillNames } });
-        if (validSkills.length !== skillNames.length) {
-            await session.abortTransaction();
-            session.endSession();
-            return res.status(400).json({ message: 'One or more skills are invalid.' });
-        }
-
-        // Create skills if they don’t exist
-        const skillPromises = validSkills.map(skill =>
-            Skill.findOneAndUpdate(
-                { name: skill.name },
-                { name: skill.name, category: 'Auto-detected' },
-                { upsert: true, new: true, session }
-            ).exec()
+        
+        // Find existing skills
+        const existingSkills = await Skill.find({ name: { $in: skillNames } }).session(session);
+        const existingSkillNames = existingSkills.map(skill => skill.name);
+        
+        // Find skills that don't exist yet
+        const newSkillNames = skillNames.filter(name => !existingSkillNames.includes(name));
+        
+        // Create new skills if needed
+        const newSkillPromises = newSkillNames.map(name => 
+            Skill.create([{
+                name,
+                category: 'Auto-detected'
+            }], { session })
         );
-        const skillDocuments = await Promise.all(skillPromises);
-        const extractedSkillIds = skillDocuments.map(skill => skill._id);
+        
+        const newSkillResults = await Promise.all(newSkillPromises);
+        const newSkills = newSkillResults.flat();
+        
+        // Combine existing and new skills
+        const allSkills = [...existingSkills, ...newSkills];
+        const extractedSkillIds = allSkills.map(skill => skill._id);
 
         // Create freelancer profile
         const newFreelancer = await Freelancer.create([{
@@ -102,7 +130,6 @@ export const registerFreelancer = async (req, res) => {
         res.status(500).json({ message: 'Error creating freelancer.' });
     }
 };
-
 // Get My Profile
 export const getMyProfile = async (req, res) => {
   try {

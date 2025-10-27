@@ -61,7 +61,7 @@ const [isAuthenticating, setIsAuthenticating] = useState(false);
       console.log("Data sent:", { email, password }); // Log the data being sent
 
       const response = await axios.post(
-        "http://localhost:8080/api/auth/login",
+        "https://backend-visiocraft-production.up.railway.app/api/auth/login",
         { email, password },
         {
           headers: { "Content-Type": "application/json" },
@@ -79,11 +79,11 @@ const [isAuthenticating, setIsAuthenticating] = useState(false);
 
       setTimeout(() => {
         if (user.role === "Client") {
-          window.location.href = "http://localhost:5175";
+          window.location.href = "https://client-visiocraft.vercel.app/";
         } else if(user.role === "Admin") {
-            window.location.href = "http://localhost:5174";
+            window.location.href = "https://admin-five-pearl.vercel.app/";
         }else if(user.role === "Freelancer"){
-            window.location.href = "http://localhost:5176";
+            window.location.href = "https://freelancer-two-tau.vercel.app/";
 
         }else{
           navigate("/");
@@ -103,7 +103,7 @@ const [isAuthenticating, setIsAuthenticating] = useState(false);
     setIsAuthenticating(true);
     setError(null);
     try {
-      const response = await axios.get("http://localhost:8080/api/auth/google/auth-url");
+      const response = await axios.get("https://backend-visiocraft-production.up.railway.app/api/auth/google/auth-url");
       window.location.href = response.data.authUrl; // Redirige vers l'URL d'authentification Google
     } catch (err) {
       setError("Failed to connect to Google. Please try again.");

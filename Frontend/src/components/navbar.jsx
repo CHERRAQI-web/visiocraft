@@ -14,7 +14,7 @@ import { Menu, Avatar, Text, Group, UnstyledButton, Alert } from "@mantine/core"
 import { User, Briefcase, PenTool, Laptop, LogOut } from 'lucide-react';
 import { useSelector, useDispatch } from "react-redux";
 import { logout as reduxLogout, setAuthenticated } from "../store/authSlice";
-import { isAuthenticated, logout as performLogout } from "../utils/auth.jsx";
+import { isAuthenticated, logout as performLogout, redirectToAppWithToken } from "../utils/auth.jsx";
 
 const Navbar = () => {
   const navigate = useNavigate();
@@ -181,17 +181,17 @@ const Navbar = () => {
                     <Text fw={600} size="sm" className="text-violet-600 truncate">{getUserEmail()}</Text>
                   </Menu.Label>
                   {user.role === "Admin" && (
-                    <Menu.Item onClick={() => window.location.href = 'http://localhost:5174'} icon={<IconDashboard size={18} className="text-teal-200" />} className="text-gray-700 rounded-md transition-colors duration-200 hover:bg-violet-50 hover:text-violet-600">
+                    <Menu.Item onClick={() => redirectToAppWithToken('https://admin-five-pearl.vercel.app/', localStorage.getItem('token'))} icon={<IconDashboard size={18} className="text-teal-200" />} className="text-gray-700 rounded-md transition-colors duration-200 hover:bg-violet-50 hover:text-violet-600">
                       Admin Dashboard
                     </Menu.Item>
                   )}
                   {user.role === "Freelancer" && (
-                    <Menu.Item onClick={() => window.location.href = 'http://localhost:5176'} icon={<IconDashboard size={18} className="text-teal-200" />} className="text-gray-700 rounded-md transition-colors duration-200 hover:bg-violet-50 hover:text-violet-600">
+                    <Menu.Item onClick={() => redirectToAppWithToken('https://freelancer-two-tau.vercel.app/', localStorage.getItem('token'))} icon={<IconDashboard size={18} className="text-teal-200" />} className="text-gray-700 rounded-md transition-colors duration-200 hover:bg-violet-50 hover:text-violet-600">
                       Freelancer Dashboard
                     </Menu.Item>
                   )}
                   {user.role === "Client" && (
-                    <Menu.Item onClick={() => window.location.href = 'http://localhost:5175'} icon={<IconDashboard size={18} className="text-violet-500" />} className="text-gray-700 rounded-md transition-colors duration-200 hover:bg-violet-50 hover:text-violet-600">
+                    <Menu.Item onClick={() => redirectToAppWithToken('https://client-visiocraft.vercel.app/', localStorage.getItem('token'))} icon={<IconDashboard size={18} className="text-violet-500" />} className="text-gray-700 rounded-md transition-colors duration-200 hover:bg-violet-50 hover:text-violet-600">
                       Client Dashboard
                     </Menu.Item>
                   )}
@@ -249,19 +249,19 @@ const Navbar = () => {
                 
                 <div className="mt-3 space-y-1">
                   {user.role === "Admin" && (
-                    <button onClick={() => {window.location.href = 'http://localhost:5174'; setIsOpen(false);}} className="w-full text-left text-white px-3 py-2 rounded-md text-base font-medium hover:bg-sky-700 flex items-center space-x-2">
+                    <button onClick={() => {redirectToAppWithToken('https://admin-five-pearl.vercel.app/', localStorage.getItem('token')); setIsOpen(false);}} className="w-full text-left text-white px-3 py-2 rounded-md text-base font-medium hover:bg-sky-700 flex items-center space-x-2">
                       <IconDashboard size={18} />
                       <span>Admin Dashboard</span>
                     </button>
                   )}
                   {user.role === "Freelancer" && (
-                    <button onClick={() => {window.location.href = 'http://localhost:5176'; setIsOpen(false);}} className="w-full text-left text-white px-3 py-2 rounded-md text-base font-medium hover:bg-sky-700 flex items-center space-x-2">
+                    <button onClick={() => {redirectToAppWithToken('https://freelancer-two-tau.vercel.app/', localStorage.getItem('token')); setIsOpen(false);}} className="w-full text-left text-white px-3 py-2 rounded-md text-base font-medium hover:bg-sky-700 flex items-center space-x-2">
                       <IconDashboard size={18} />
                       <span>Freelancer Dashboard</span>
                     </button>
                   )}
                   {user.role === "Client" && (
-                    <button onClick={() => {window.location.href = 'http://localhost:5175'; setIsOpen(false);}} className="w-full text-left text-white px-3 py-2 rounded-md text-base font-medium hover:bg-sky-700 flex items-center space-x-2">
+                    <button onClick={() => {redirectToAppWithToken('https://client-visiocraft.vercel.app/', localStorage.getItem('token')); setIsOpen(false);}} className="w-full text-left text-white px-3 py-2 rounded-md text-base font-medium hover:bg-sky-700 flex items-center space-x-2">
                       <IconDashboard size={18} />
                       <span>Client Dashboard</span>
                     </button>

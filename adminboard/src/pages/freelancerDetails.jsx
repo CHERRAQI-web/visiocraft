@@ -16,7 +16,7 @@ const FreelancerDetails = () => {
                 setLoading(true);
                 setError(null);
                 
-                const response = await axios.get(`http://localhost:8080/api/freelancers/${id}`);
+                const response = await axios.get(`http://backend-visiocraft-production.up.railway.app/api/freelancers/${id}`);
                 setFreelancer(response.data);
                 
             } catch (err) {

@@ -41,9 +41,7 @@ const servicesData = [
 const Home = () => {
     return (
         <>
-            {/* ========================================================================= */}
-            {/* 1. HERO SECTION (Light Mode) */}
-            {/* ========================================================================= */}
+          
         <section className="relative h-[750px] flex items-center justify-center bg-white overflow-hidden">
     {/* Enhanced Background: Subtle gradient for depth and lightness */}
     <div className="absolute inset-0 bg-gradient-to-br from-gray-50 via-white to-gray-100"></div> {/* Removed opacity-90 for a more natural gradient */}
@@ -101,9 +99,7 @@ const Home = () => {
         </div>
     </div>
 </section>
-            {/* ========================================================================= */}
-            {/* 2. SERVICES SECTION (Light Mode: Clean & Crisp) */}
-            {/* ========================================================================= */}
+            
             <section className="py-24 bg-white">
                 <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
                     <h2 className="text-4xl font-extrabold text-gray-900 mb-4 text-center">
@@ -144,9 +140,6 @@ const Home = () => {
             </section>
 
       
-            {/* ========================================================================= */}
-            {/* 4. CTA FOOTER (Light Mode) */}
-            {/* ========================================================================= */}
             <section className="py-20 bg-gray-100 border-t border-gray-200">
                 <div className="max-w-7xl mx-auto px-6 text-center text-gray-900">
                     <h2 className="text-4xl font-extrabold mb-6">

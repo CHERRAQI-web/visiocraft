@@ -38,9 +38,9 @@ export const login = async (req, res) => {
 
     res.cookie("token", token, {
       httpOnly: true,
-      secure: process.env.NODE_ENV === "production",
+secure: true,
       maxAge: 30 * 24 * 60 * 60 * 1000,
-      sameSite: 'Lax'
+      sameSite: 'none',
     });
 
     res.status(200).json({
@@ -185,7 +185,7 @@ export const handleGoogleCallback = async (req, res) => {
     console.log("Authentication successful for user:", user.email);
     
     // Redirect to the homepage with success message
-    res.redirect('http://localhost:5175/?auth=success');
+    res.redirect('https://client-visiocraft.vercel.app/?auth=success');
     
   } catch (error) {
     console.error("=== DETAILED ERROR DURING GOOGLE CALLBACK ===");
@@ -194,7 +194,7 @@ export const handleGoogleCallback = async (req, res) => {
     console.error("===============================================");
     
     // Redirect with error message
-    res.redirect('http://localhost:5175/login?auth=error');
+    res.redirect('https://client-visiocraft.vercel.app/login?auth=error');
   }
 };
 

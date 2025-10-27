@@ -1,8 +1,8 @@
 import Project from '../models/project.models.js';
-import AIService from '../services/aiService.js';
 import Freelancer from '../models/freelancer.models.js';
-import Skill from '../models/skill.models.js'; // Don't forget to import Skill
-import AiLog from '../models/aiLog.models.js'; // Don't forget to import AiLog
+import Skill from '../models/Skill.models.js';
+
+import AiLog from '../models/aiLog.models.js'; 
 import mongoose from 'mongoose';
 import ProjetFile from '../models/project_files.models.js';
 import User from '../models/user.models.js';
@@ -42,7 +42,7 @@ export const createProjectRequest = async (req, res) => {
 
         // 1. Call Python service for skill extraction
         console.log("Calling Python AI service for skill extraction...");
-        const aiServiceResponse = await fetch('http://localhost:5000/extract-skills', {
+        const aiServiceResponse = await fetch('https://aivisiocraft.up.railway.app/extract-skills', {
             method: 'POST',
             headers: { 'Content-Type': 'application/json' },
             body: JSON.stringify({ project_details: project_details }),
@@ -612,7 +612,7 @@ export const updateProject = async (req, res) => {
             console.log("Project details changed, re-extracting skills...");
             
             // Call AI service to extract skills
-            const aiServiceResponse = await fetch('http://localhost:5000/extract-skills', {
+            const aiServiceResponse = await fetch('https://aivisiocraft.up.railway.app/extract-skills', {
                 method: 'POST',
                 headers: { 'Content-Type': 'application/json' },
                 body: JSON.stringify({ project_details: project_details }),

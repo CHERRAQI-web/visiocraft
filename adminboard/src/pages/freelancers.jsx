@@ -38,7 +38,7 @@ const Freelancer = () => {
         params.append('search', search);
       }
       
-      const response = await axios.get(`http://localhost:8080/api/freelancers?${params.toString()}`, {
+      const response = await axios.get(`http://backend-visiocraft-production.up.railway.app/api/freelancers?${params.toString()}`, {
         withCredentials: true,
       });
 
@@ -88,7 +88,7 @@ const Freelancer = () => {
 
     try {
       console.log("ID of freelancer to delete:", freelancerToDelete);
-      await axios.delete(`http://localhost:8080/api/freelancers/${freelancerToDelete}`, {
+      await axios.delete(`http://backend-visiocraft-production.up.railway.app/api/freelancers/${freelancerToDelete}`, {
         withCredentials: true,
       });
       

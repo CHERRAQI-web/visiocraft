@@ -44,7 +44,7 @@ const ProjectManagement = () => {
           params.append('status', filterStatus);
         }
 
-        const response = await axios.get(`http://localhost:8080/api/projects/all?${params}`, {
+        const response = await axios.get(`http://backend-visiocraft-production.up.railway.app/api/projects/all?${params}`, {
           withCredentials: true,
         });
 
@@ -84,7 +84,7 @@ const ProjectManagement = () => {
     if (!projectToDelete) return;
 
     try {
-      await axios.delete(`http://localhost:8080/api/projects/${projectToDelete}`, {
+      await axios.delete(`http://backend-visiocraft-production.up.railway.app/api/projects/${projectToDelete}`, {
         withCredentials: true,
       });
 

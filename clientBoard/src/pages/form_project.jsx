@@ -118,7 +118,7 @@ const StepsBar = ({ currentStep }) => {
   );
 };
 
-const BASE_URL = "http://localhost:8080/api";
+const BASE_URL = "https://backend-visiocraft-production.up.railway.app/api";
 const AXIOS_CONFIG = {
   headers: { "Content-Type": "application/json" },
   withCredentials: true,
