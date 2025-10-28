@@ -1,15 +1,10 @@
-import axios from "axios";
+import api from "./api.js";
 
 export const isAuthenticated = async () => {
   try {
-    // On ajoute un paramètre unique (timestamp) à chaque appel pour contourner le cache du navigateur
-    const response = await axios.get(`https://backend-visiocraft-production.up.railway.app/api/auth/me?t=${Date.now()}`, {
-      withCredentials: true,
-    });
-    
-    // AJOUT POUR LE DÉBOGAGE : Vérifiez ce que vous recevez
-    console.log("Réponse de /api/me :", response.data);
-    
+    // --- PLUS BESOIN DE RÉCUPÉRER LE TOKEN MANUELLEMENT ---
+    // Le navigateur envoie automatiquement le cookie avec la requête.
+    const response = await api.get(`/auth/me?t=${Date.now()}`);
     return response.data;
   } catch (error) {
     console.error("Erreur dans isAuthenticated:", error);
@@ -19,16 +14,13 @@ export const isAuthenticated = async () => {
 
 export const logout = async () => {
   try {
-    await axios.post("https://backend-visiocraft-production.up.railway.app/api/auth/logout", {}, { 
-      withCredentials: true,
-      // Note : 'credentials: "include"' est redondant quand on utilise déjà 'withCredentials: true' avec axios
-    });
+    // Le backend va s'occuper de supprimer le cookie.
+    await api.post("/auth/logout");
   } catch (error) {
     console.error("Erreur lors du logout :", error);
   } finally {
-    localStorage.removeItem("token");
-    window.dispatchEvent(new Event("userLoggedOut"));
-    localStorage.setItem("logout", Date.now());
-    window.location.href = "https://frontend-visiocraft.vercel.app/login";
+    // Nettoyage côté client et redirection.
+    window.location.href = 'https://frontend-visiocraft.vercel.app/login';
   }
 };
+

@@ -107,39 +107,29 @@ export const logout = async (req, res) => {
   }
 };
 
-// Handle Google OAuth Callback
-// controllers/auth.controllers.js
-
 export const handleGoogleCallback = async (req, res) => {
   const { code } = req.query;
-  
+
   if (!code) {
-    return res.status(400).send(`
-      <!DOCTYPE html>
-      <html><body><h1>Error: Authorization code missing.</h1></body></html>
-    `);
+    return res.status(400).json({ message: "Authorization code missing." });
   }
 
   try {
     const { tokens, userInfo } = await handleGoogleCallbackAndFetchUser(code);
-    
+
     if (!userInfo || !userInfo.email) {
-      return res.status(400).send(`
-        <!DOCTYPE html>
-        <html><body><h1>Error: Unable to retrieve user information.</h1></body></html>
-      `);
+      return res.status(400).json({ message: "Unable to retrieve user information from Google." });
     }
-    
+
     let user = await User.findOne({ email: userInfo.email });
-    
+
     if (!user) {
-      // ... (ton code pour créer un nouvel utilisateur reste le même)
       user = new User({
         first_name: userInfo.given_name || '',
         last_name: userInfo.family_name || '',
         email: userInfo.email,
         password: 'google_oauth_' + Math.random().toString(36).substring(2, 15),
-        role: 'Client', // Default role
+        role: 'Client',
         googleTokens: tokens
       });
       await user.save();
@@ -152,7 +142,6 @@ export const handleGoogleCallback = async (req, res) => {
       });
       await newClient.save();
     } else {
-      // ... (ton code pour mettre à jour l'utilisateur existant reste le même)
       user.googleTokens = tokens;
       await user.save();
       
@@ -163,68 +152,57 @@ export const handleGoogleCallback = async (req, res) => {
       }
     }
 
-    // Create JWT token with userId
-    const jwtToken = jwt.sign(
-      { 
-        userId: user._id, 
-        email: user.email, 
-        role: user.role 
-      },
-      process.env.JWT_SECRET,
-      { expiresIn: '7d' }
-    );
+    const token = generateToken(user);
     
-    // Set the cookie
-    res.cookie('token', jwtToken, {
-      httpOnly: true,
-      secure: process.env.NODE_ENV === "production",
-      maxAge: 7 * 24 * 60 * 1000,
-      sameSite: 'Lax'
-    });
-    
-    console.log("Authentication successful for user:", user.email, "with role:", user.role);
-    
-    // === HADI HIYA L-KHOTBA L-JDIDA DYAL REDIRECTION ===
-    let redirectUrl = 'https://client-visiocraft.vercel.app/'; // URL par défaut
+    console.log("Generated token for user", user.email, ":", token);
 
-    // Vérifie le rôle de l'utilisateur et choisit la bonne URL
-    switch (user.role) {
-      case 'Freelancer':
-        redirectUrl = 'https://freelancer-visiocraft.vercel.app/';
-        break;
-      case 'Admin':
-        redirectUrl = 'https://admin-visiocraft.vercel.app/';
-        break;
-      case 'Client':
-        // C'est déjà l'URL par défaut, mais on la laisse pour la clarté
-        redirectUrl = 'https://client-visiocraft.vercel.app/';
-        break;
-      default:
-        // Si le rôle est inconnu, on redirige vers la page client par sécurité
-        console.warn(`Rôle inconnu '${user.role}' pour l'utilisateur ${user.email}. Redirection vers la page client par défaut.`);
-        redirectUrl = 'https://client-visiocraft.vercel.app/';
-        break;
+    // Set the token in a cookie
+    res.cookie("token", token, {
+      httpOnly: true,
+      secure: true,
+      maxAge: 30 * 24 * 60 * 60 * 1000,
+      sameSite: 'none',
+    });
+
+    // Determine the redirect URL based on user role
+    let redirectUrl;
+    if (user.role === 'Admin') {
+      redirectUrl = 'https://admin-visiocraft.vercel.app/';
+    } else if (user.role === 'Freelancer') {
+      redirectUrl = 'https://freelancer-visiocraft.vercel.app/';
+    } else if (user.role === 'Client') {
+      redirectUrl = 'https://client-visiocraft.vercel.app/';
+    } else {
+      redirectUrl = 'https://frontend-visiocraft.vercel.app/';
     }
 
-    // Ajoute le paramètre de succès à l'URL finale
-    const finalRedirectUrl = `${redirectUrl}?auth=success`;
+    // Add token as a query parameter for local storage
+    const url = new URL(redirectUrl);
+    url.searchParams.append('token', token);
+    url.searchParams.append('user', JSON.stringify({
+      id: user._id,
+      email: user.email,
+      role: user.role,
+      first_name: user.first_name,
+      last_name: user.last_name
+    }));
+  res.status(200).json({
+      message: 'Logged in successfully',
+      token,
+      user: {
+        id: user._id,
+        email: user.email,
+        role: user.role
+      }
+    });
+    // Redirect to the appropriate dashboard with token in URL
+    res.redirect(url.toString());
 
-    console.log(`Redirection de l'utilisateur vers : ${finalRedirectUrl}`);
-    
-    // Effectue la redirection vers la bonne page
-    res.redirect(finalRedirectUrl);
-    
   } catch (error) {
-    console.error("=== DETAILED ERROR DURING GOOGLE CALLBACK ===");
-    console.error("Error Name:", error.name);
-    console.error("Error Message:", error.message);
-    console.error("===============================================");
-    
-    // En cas d'erreur, on redirige vers la page de login du client
-    res.redirect('https://client-visiocraft.vercel.app/login?auth=error');
+    console.error("Error during Google callback:", error);
+    res.status(500).json({ message: 'Internal server error during authentication.' });
   }
 };
-
 // Get Google Authentication URL
 export const getGoogleAuthUrl = async (req, res) => {
   try {

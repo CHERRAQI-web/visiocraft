@@ -1,37 +1,31 @@
 import axios from "axios";
 
-// Create a custom Axios instance with authentication settings
 const api = axios.create({
   baseURL: 'https://backend-visiocraft-production.up.railway.app/api',
-  withCredentials: true,
+  withCredentials: true, // --- CRUCIAL : Demande au navigateur d'envoyer les cookies ---
 });
 
-// Add an interceptor to correctly set the Content-Type for FormData
+// --- IMPORTANT : Tu peux SUPPRIMER l'intercepteur qui ajoutait le header Authorization ---
+// Le navigateur s'en occupe maintenant automatiquement avec le cookie.
 api.interceptors.request.use(
   (config) => {
-    // If the request contains FormData, don't set the Content-Type
-    // Let the browser automatically set it with the correct boundary
+    // On garde la logique pour FormData
     if (config.data instanceof FormData) {
-      config.headers = {
-        ...config.headers,
-        // Don't set Content-Type for FormData
-      };
+      config.headers = { ...config.headers };
     }
     return config;
   },
-  (error) => {
-    return Promise.reject(error);
-  }
+  (error) => Promise.reject(error)
 );
 
-// Handle 401 and 500 errors automatically
+// L'intercepteur de réponse pour gérer les 401 est toujours bon à garder.
 api.interceptors.response.use(
   (response) => response,
   async (error) => {
     if (error.response?.status === 401) {
-      console.error('Authentication error:', error.response.data);
-    } else if (error.response?.status === 500) {
-      console.error('Server error:', error.response.data);
+      console.error('Authentication error (401): Token might be expired or invalid.');
+      // En cas d'erreur, on redirige vers la page de login principale
+      window.location.href = 'https://frontend-visiocraft.vercel.app/login?auth=expired';
     }
     return Promise.reject(error);
   }

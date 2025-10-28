@@ -1,41 +1,64 @@
-// src/GoogleCallback.jsx
-import { useEffect } from 'react';
+
+import React, { useEffect } from 'react';
 import { useNavigate, useSearchParams } from 'react-router-dom';
-import api from '../src/utils/api.js'; 
+import api from '../src/utils/api.js';
 
 const GoogleCallback = () => {
-  const [searchParams] = useSearchParams();
   const navigate = useNavigate();
+  const [searchParams] = useSearchParams();
 
   useEffect(() => {
-    const code = searchParams.get('code');
-    if (!code) {
-      navigate('/login?auth=error');
-      return;
-    }
+    const handleCallback = async () => {
+      const code = searchParams.get('code');
 
-    const exchangeCodeForToken = async () => {
+      if (!code) {
+        navigate('/login?auth=error');
+        return;
+      }
+
       try {
-        // Le frontend envoie le code au backend
+        // 1. On envoie le code au serveur
         const response = await api.get(`/auth/google/callback?code=${code}`);
-        const { token, user } = response.data;
+        
+        // 2. On reçoit le colis (la réponse avec le token et l'utilisateur)
+        const { token, user, redirectUrl } = response.data;
 
-        // Le frontend reçoit le JWT et le stocke
-        localStorage.setItem('token', token);
-        console.log(response.data)
-        // Redirection finale
-        window.location.href = 'https://client-visiocraft.vercel.app/';
-
+        if (token && user) {
+          // 3. On met le ticket dans sa poche (localStorage)
+          localStorage.setItem('token', token);
+          
+          // 4. On prévient tout le monde (comme la Navbar) qu'on est connecté
+          window.dispatchEvent(new CustomEvent('userLoggedIn', { 
+            detail: { user } 
+          }));
+          
+          // 5. On va au salon (on redirige vers le bon dashboard)
+          if (redirectUrl) {
+            // Create the redirect URL with token
+            const url = new URL(redirectUrl);
+            url.searchParams.append('token', token);
+            window.location.href = url.toString();
+          } else {
+            // Fallback to home if no redirect URL
+            navigate('/');
+          }
+        } else {
+          navigate('/login?auth=error');
+        }
       } catch (error) {
-        console.error('Error exchanging code for token:', error);
+        console.error('Erreur:', error);
         navigate('/login?auth=error');
       }
     };
 
-    exchangeCodeForToken();
+    handleCallback();
   }, [searchParams, navigate]);
 
-  return <h2>Authentication in progress...</h2>;
+  return (
+    <div style={{ display: 'flex', justifyContent: 'center', alignItems: 'center', height: '100vh' }}>
+      <h2>Authentification en cours, veuillez patienter...</h2>
+    </div>
+  );
 };
 
 export default GoogleCallback;
