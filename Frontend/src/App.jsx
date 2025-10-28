@@ -7,6 +7,7 @@ import Layout from "./components/layout.jsx";
 import Register from "./pages/register.jsx";
 import Contact from './pages/contact.jsx';
 import { CookiesProvider } from "react-cookie";
+import GoogleCallback from './GoogleCallback';
 
 function App() {
   return (
@@ -19,6 +20,7 @@ function App() {
           <Route path="login" element={<Login />} />
           <Route path="register" element={<Register />} />
           <Route path="contact" element={<Contact />} />
+        <Route path="/auth/google/callback" element={<GoogleCallback />} />
 
           </Route>
         </Routes>

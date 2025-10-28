@@ -108,6 +108,8 @@ export const logout = async (req, res) => {
 };
 
 // Handle Google OAuth Callback
+// controllers/auth.controllers.js
+
 export const handleGoogleCallback = async (req, res) => {
   const { code } = req.query;
   
@@ -131,7 +133,7 @@ export const handleGoogleCallback = async (req, res) => {
     let user = await User.findOne({ email: userInfo.email });
     
     if (!user) {
-      // Create a new user
+      // ... (ton code pour créer un nouvel utilisateur reste le même)
       user = new User({
         first_name: userInfo.given_name || '',
         last_name: userInfo.family_name || '',
@@ -142,7 +144,6 @@ export const handleGoogleCallback = async (req, res) => {
       });
       await user.save();
       
-      // Create Client record for the new user
       const newClient = new Client({
         user_id: user._id,
         company_name: userInfo.name || '',
@@ -151,11 +152,10 @@ export const handleGoogleCallback = async (req, res) => {
       });
       await newClient.save();
     } else {
-      // Update existing user
+      // ... (ton code pour mettre à jour l'utilisateur existant reste le même)
       user.googleTokens = tokens;
       await user.save();
       
-      // Update Client record if exists
       const client = await Client.findOne({ user_id: user._id });
       if (client) {
         client.googleTokens = tokens;
@@ -182,10 +182,37 @@ export const handleGoogleCallback = async (req, res) => {
       sameSite: 'Lax'
     });
     
-    console.log("Authentication successful for user:", user.email);
+    console.log("Authentication successful for user:", user.email, "with role:", user.role);
     
-    // Redirect to the homepage with success message
-    res.redirect('https://client-visiocraft.vercel.app/?auth=success');
+    // === HADI HIYA L-KHOTBA L-JDIDA DYAL REDIRECTION ===
+    let redirectUrl = 'https://client-visiocraft.vercel.app/'; // URL par défaut
+
+    // Vérifie le rôle de l'utilisateur et choisit la bonne URL
+    switch (user.role) {
+      case 'Freelancer':
+        redirectUrl = 'https://freelancer-visiocraft.vercel.app/';
+        break;
+      case 'Admin':
+        redirectUrl = 'https://admin-visiocraft.vercel.app/';
+        break;
+      case 'Client':
+        // C'est déjà l'URL par défaut, mais on la laisse pour la clarté
+        redirectUrl = 'https://client-visiocraft.vercel.app/';
+        break;
+      default:
+        // Si le rôle est inconnu, on redirige vers la page client par sécurité
+        console.warn(`Rôle inconnu '${user.role}' pour l'utilisateur ${user.email}. Redirection vers la page client par défaut.`);
+        redirectUrl = 'https://client-visiocraft.vercel.app/';
+        break;
+    }
+
+    // Ajoute le paramètre de succès à l'URL finale
+    const finalRedirectUrl = `${redirectUrl}?auth=success`;
+
+    console.log(`Redirection de l'utilisateur vers : ${finalRedirectUrl}`);
+    
+    // Effectue la redirection vers la bonne page
+    res.redirect(finalRedirectUrl);
     
   } catch (error) {
     console.error("=== DETAILED ERROR DURING GOOGLE CALLBACK ===");
@@ -193,7 +220,7 @@ export const handleGoogleCallback = async (req, res) => {
     console.error("Error Message:", error.message);
     console.error("===============================================");
     
-    // Redirect with error message
+    // En cas d'erreur, on redirige vers la page de login du client
     res.redirect('https://client-visiocraft.vercel.app/login?auth=error');
   }
 };

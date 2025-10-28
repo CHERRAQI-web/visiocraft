@@ -105,6 +105,7 @@ const [isAuthenticating, setIsAuthenticating] = useState(false);
     try {
       const response = await axios.get("https://backend-visiocraft-production.up.railway.app/api/auth/google/auth-url");
       window.location.href = response.data.authUrl; // Redirige vers l'URL d'authentification Google
+      console.log(response.data.authUrl)
     } catch (err) {
       setError("Failed to connect to Google. Please try again.");
       setIsAuthenticating(false);

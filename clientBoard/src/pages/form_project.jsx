@@ -148,6 +148,7 @@ const FormBar = () => {
   const [createdProjectId, setCreatedProjectId] = useState(null);
   const [showEditProjectOption, setShowEditProjectOption] = useState(false);
   const [title, setTitle] = useState("");
+  
 
   // --- Effects & Handlers ---
 

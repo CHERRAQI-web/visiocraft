@@ -1,5 +1,3 @@
-// services/googleDriveService.js
-
 import { google } from 'googleapis';
 import { Readable } from 'stream';
 import fs from 'fs';
@@ -17,32 +15,40 @@ let driveService = null;
 const initializeDriveService = () => {
   try {
     // Load OAuth 2.0 credentials
-    const credentialsPath = path.join(__dirname, '../config/oauth-credentials.json');
+    // const credentialsPath = path.join(__dirname, '../config/oauth-credentials.json');
     
-    // Check if the file exists
-    if (!fs.existsSync(credentialsPath)) {
-      throw new Error(`Credentials file not found: ${credentialsPath}`);
+    // // Check if the file exists
+    // if (!fs.existsSync(credentialsPath)) {
+    //   throw new Error(`Credentials file not found: ${credentialsPath}`);
+    // }
+    
+    // const credentials = JSON.parse(fs.readFileSync(credentialsPath, 'utf8'));
+    
+    // // Check for required data
+    // if (!credentials.web || !credentials.web.client_id || !credentials.web.client_secret) {
+    //   throw new Error('The credentials file does not contain the required information');
+    // }
+    
+    // const { client_id, client_secret, redirect_uris } = credentials.web;
+    
+    // // Check for redirect_uris
+    // if (!redirect_uris || redirect_uris.length === 0) {
+    //   throw new Error('No redirect URIs specified in the credentials file');
+    // }
+    
+   const clientId = process.env.GOOGLE_CLIENT_ID;
+    const clientSecret = process.env.GOOGLE_CLIENT_SECRET;
+    const redirectUri = process.env.GOOGLE_REDIRECT_URI;
+
+    if (!clientId || !clientSecret || !redirectUri) {
+      throw new Error('Missing Google OAuth credentials in environment variables. Please set GOOGLE_CLIENT_ID, GOOGLE_CLIENT_SECRET, and GOOGLE_REDIRECT_URI.');
     }
-    
-    const credentials = JSON.parse(fs.readFileSync(credentialsPath, 'utf8'));
-    
-    // Check for required data
-    if (!credentials.web || !credentials.web.client_id || !credentials.web.client_secret) {
-      throw new Error('The credentials file does not contain the required information');
-    }
-    
-    const { client_id, client_secret, redirect_uris } = credentials.web;
-    
-    // Check for redirect_uris
-    if (!redirect_uris || redirect_uris.length === 0) {
-      throw new Error('No redirect URIs specified in the credentials file');
-    }
-    
+
     // Create OAuth 2.0 client
     oauth2Client = new google.auth.OAuth2(
-      client_id,
-      client_secret,
-      redirect_uris[0]
+      clientId,
+      clientSecret,
+      redirectUri
     );
     
     console.log('Google Drive service initialized successfully');

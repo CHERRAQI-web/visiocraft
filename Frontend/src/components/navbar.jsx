@@ -15,7 +15,12 @@ import { User, Briefcase, PenTool, Laptop, LogOut } from 'lucide-react';
 import { useSelector, useDispatch } from "react-redux";
 import { logout as reduxLogout, setAuthenticated } from "../store/authSlice";
 import { isAuthenticated, logout as performLogout, redirectToAppWithToken } from "../utils/auth.jsx";
-
+import axios from 'axios';
+const BASE_URL = "https://backend-visiocraft-production.up.railway.app/api";
+const AXIOS_CONFIG = {
+  headers: { "Content-Type": "application/json" },
+  withCredentials: true,
+};
 const Navbar = () => {
   const navigate = useNavigate();
   const dispatch = useDispatch();
@@ -23,7 +28,10 @@ const Navbar = () => {
   const [authChecked, setAuthChecked] = useState(false);
   const [isOpen, setIsOpen] = useState(false);
   const [shouldLogout, setShouldLogout] = useState(false);
-
+  const [isGoogleConnected, setIsGoogleConnected] = useState(null);
+  const [currentUser, setCurrentUser] = useState(null);
+const [error,setError]=useState();
+  const [loading, setLoading] = useState(true);
   // Fonction pour récupérer les données utilisateur avec useCallback
   const fetchUser = useCallback(async () => {
     try {
@@ -98,7 +106,33 @@ const Navbar = () => {
   const handleLogout = () => {
     setShouldLogout(true);
   };
-
+  // useEffect(() => {
+  //   const fetchInitialData = async () => {
+  //     try {
+  //       setLoading(true);
+  //       const userResponse = await axios.get(
+  //         `${BASE_URL}/auth/me`,
+  //         AXIOS_CONFIG
+  //       );
+  //       setCurrentUser(userResponse.data);
+  //       try {
+  //         const statusResponse = await axios.get(
+  //           `${BASE_URL}/auth/me/google-status`,
+  //           AXIOS_CONFIG
+  //         );
+  //         setIsGoogleConnected(statusResponse.data.isConnected);
+  //       } catch (statusError) {
+  //         setIsGoogleConnected(!!userResponse.data.googleTokens);
+  //       }
+        
+  //     } catch (err) {
+  //       setError(err);
+  //     } finally {
+  //       setLoading(false);
+  //     }
+  //   };
+  //   fetchInitialData();
+  // }, []);
   // Fonctions utilitaires pour afficher les infos de l'utilisateur
   const getUserInitials = () => {
     if (!user) return "U";
