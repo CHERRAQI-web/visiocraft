@@ -38,7 +38,7 @@ const Freelancer = () => {
         params.append('search', search);
       }
       
-      const response = await axios.get(`http://backend-visiocraft-production.up.railway.app/api/freelancers?${params.toString()}`, {
+      const response = await axios.get(`https://backend-visiocraft-production.up.railway.app/api/freelancers?${params.toString()}`, {
         withCredentials: true,
       });
 
@@ -88,7 +88,7 @@ const Freelancer = () => {
 
     try {
       console.log("ID of freelancer to delete:", freelancerToDelete);
-      await axios.delete(`http://backend-visiocraft-production.up.railway.app/api/freelancers/${freelancerToDelete}`, {
+      await axios.delete(`https://backend-visiocraft-production.up.railway.app/api/freelancers/${freelancerToDelete}`, {
         withCredentials: true,
       });
       
@@ -142,18 +142,26 @@ const Freelancer = () => {
   };
 
   // Helper function to get freelancer name
-  const getFreelancerName = (freelancer) => {
-    if (freelancer.user_id) {
-      return `${freelancer.user_id.first_name} ${freelancer.user_id.last_name}`;
-    }
-    return "Unknown";
-  };
+const getFreelancerName = (freelancer) => {
+  // The name is stored in the 'username' field
+  return freelancer.username || "Unknown";
+};
 
   // Helper function to get freelancer email
-  const getFreelancerEmail = (freelancer) => {
-    return freelancer.user_id?.email || "No email";
-  };
-
+ const getFreelancerEmail = (freelancer) => {
+  // Try different possible paths to the email
+  if (freelancer.email) {
+    return freelancer.email;
+  }
+  if (freelancer.user_id?.email) {
+    return freelancer.user_id.email;
+  }
+  return "No email";
+};
+const getPortfolioUrl = (freelancer) => {
+  // The portfolio URL is in the 'portfolio' field
+  return freelancer.portfolio || null;
+};
   // Component rendering
   return (
     <div className="bg-white p-4 md:p-6 rounded-xl shadow-md">
@@ -251,7 +259,7 @@ const Freelancer = () => {
                   <div className="mb-3">
                     <p className="text-xs font-semibold text-gray-500 uppercase mb-1">Portfolio</p>
                     {freelancer.portfolio_url ? (
-                      <a href={freelancer.portfolio_url} target="_blank" rel="noopener noreferrer" className="text-blue-600 hover:text-blue-800 text-sm flex items-center">
+                      <a href={getPortfolioUrl(freelancer)} target="_blank" rel="noopener noreferrer" className="text-blue-600 hover:text-blue-800 text-sm flex items-center">
                         <Globe className="w-4 h-4 mr-1" />
                         View portfolio
                       </a>
@@ -315,8 +323,8 @@ const Freelancer = () => {
                         <div className="text-sm text-gray-900">{getFreelancerEmail(freelancer)}</div>
                       </td>
                       <td className="px-6 py-4 whitespace-nowrap">
-                        {freelancer.portfolio_url ? (
-                          <a href={freelancer.portfolio_url} target="_blank" rel="noopener noreferrer" className="text-blue-600 hover:text-blue-800 text-sm">View portfolio</a>
+                        {freelancer.portfolio ? (
+                          <a href={freelancer.portfolio} target="_blank" rel="noopener noreferrer" className="text-blue-600 hover:text-blue-800 text-sm">View portfolio</a>
                         ) : (
                           <span className="text-gray-400 text-sm">Not specified</span>
                         )}

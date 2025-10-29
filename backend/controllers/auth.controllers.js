@@ -167,9 +167,9 @@ export const handleGoogleCallback = async (req, res) => {
     // Determine the redirect URL based on user role
     let redirectUrl;
     if (user.role === 'Admin') {
-      redirectUrl = 'https://admin-visiocraft.vercel.app/';
+      redirectUrl = 'https://admin-five-pearl.vercel.app/';
     } else if (user.role === 'Freelancer') {
-      redirectUrl = 'https://freelancer-visiocraft.vercel.app/';
+      redirectUrl = 'https://freelancer-two-tau.vercel.app/';
     } else if (user.role === 'Client') {
       redirectUrl = 'https://client-visiocraft.vercel.app/';
     } else {

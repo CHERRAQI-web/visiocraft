@@ -40,7 +40,7 @@ const ProjectDetails = () => {
         setError(null);
 
         const response = await axios.get(
-          `http://backend-visiocraft-production.up.railway.app/api/projects/${projectId}`,
+          `https://backend-visiocraft-production.up.railway.app/api/projects/${projectId}`,
           {
             withCredentials: true,
           }
@@ -73,7 +73,7 @@ const ProjectDetails = () => {
 
     try {
       const response = await axios.put(
-        `http://backend-visiocraft-production.up.railway.app/api/projects/${projectId}/assign`,
+        `https://backend-visiocraft-production.up.railway.app/api/projects/${projectId}/assign`,
         { freelancer_id: freelancerId }, // Request body
         { withCredentials: true }
       );
@@ -451,7 +451,7 @@ const ProjectDetails = () => {
                       <button
                         onClick={() => handleAssignProject(suggestion.freelancer_id._id)}
                         disabled={
-                          project.status === "assigned" ||
+                              project.status !== "pending_assignment" ||
                           assigning[suggestion.freelancer_id._id]
                         }
                         className="px-3 py-1 bg-green-600 text-white rounded-md hover:bg-green-700 disabled:bg-gray-400 disabled:cursor-not-allowed transition-colors text-sm"
@@ -523,9 +523,10 @@ const ProjectDetails = () => {
                           <button
                             onClick={() => handleAssignProject(suggestion.freelancer_id._id)}
                             disabled={
-                              project.status === "assigned" ||
+                                  project.status !== "pending_assignment" || 
                               assigning[suggestion.freelancer_id._id]
                             }
+                              
                             className="px-3 py-1 bg-green-600 text-white rounded-md hover:bg-green-700 disabled:bg-gray-400 disabled:cursor-not-allowed transition-colors"
                           >
                             {assigning[suggestion.freelancer_id._id]

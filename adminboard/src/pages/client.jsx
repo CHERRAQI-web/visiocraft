@@ -25,7 +25,7 @@ const Client = () => {
         setLoading(true);
         setError(null);
 
-        const response = await axios.get("http://backend-visiocraft-production.up.railway.app/api/clients", {
+        const response = await axios.get("https://backend-visiocraft-production.up.railway.app/api/clients", {
           withCredentials: true,
         });
 
@@ -57,7 +57,7 @@ const Client = () => {
 
     try {
       await axios.delete(
-        `http://backend-visiocraft-production.up.railway.app/api/clients/${clientToDelete}`,
+        `https://backend-visiocraft-production.up.railway.app/api/clients/${clientToDelete}`,
         {
           withCredentials: true,
         }

@@ -304,7 +304,7 @@ const Navbar = () => {
                     <Menu.Item
                       onClick={() =>
                         redirectToAppWithToken(
-                          "https://admin-visiocraft.vercel.app/",
+                          "admin-five-pearl.vercel.app",
                           localStorage.getItem("token")
                         )
                       }
@@ -459,7 +459,7 @@ const Navbar = () => {
                     <Menu.Item
                       onClick={() =>
                         redirectToAppWithToken(
-                          "https://admin-visiocraft.vercel.app/",
+                          "admin-five-pearl.vercel.app/",
                           localStorage.getItem("token")
                         )
                       }

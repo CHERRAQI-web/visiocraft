@@ -1,7 +1,6 @@
 import DailyCalendar from "../components/calendrie.jsx";
 import { useState, useMemo, useEffect } from "react";
 import StatCard from '../components/StatCard.jsx';
-import ProjectTrendChart from "../components/ProjectTrendChart.jsx";
 import axios from 'axios';
 import { Link } from "react-router-dom";
 import { Search, ChevronLeft, ChevronRight, AlertTriangle, Calendar, DollarSign, Clock, Briefcase, Users, UserCheck } from 'lucide-react';
@@ -57,7 +56,7 @@ const Dashboard = () => {
       try {
         setStatsLoading(true);
         setStatsError(null);
-        const response = await axios.get(`http://backend-visiocraft-production.up.railway.app/api/stats`, {
+        const response = await axios.get(`https://backend-visiocraft-production.up.railway.app/api/stats`, {
           withCredentials: true,
         });
         setDashboardStats(response.data);
@@ -90,7 +89,7 @@ const Dashboard = () => {
 
         params.append('status', 'pending_assignment');
 
-        const response = await axios.get(`http://backend-visiocraft-production.up.railway.app/api/projects/all?${params}`, {
+        const response = await axios.get(`https://backend-visiocraft-production.up.railway.app/api/projects/all?${params}`, {
           withCredentials: true,
         });
 

@@ -3,7 +3,7 @@ import axios from "axios";
 export const isAuthenticated = async () => {
   try {
     // On ajoute un paramètre unique (timestamp) à chaque appel pour contourner le cache du navigateur
-    const response = await axios.get(`http://backend-visiocraft-production.up.railway.app/api/auth/me?t=${Date.now()}`, {
+    const response = await axios.get(`https://backend-visiocraft-production.up.railway.app/api/auth/me?t=${Date.now()}`, {
       withCredentials: true,
     });
     
@@ -19,7 +19,7 @@ export const isAuthenticated = async () => {
 
 export const logout = async () => {
   try {
-    await axios.post("http://backend-visiocraft-production.up.railway.app/api/auth/logout", {}, { 
+    await axios.post("https://backend-visiocraft-production.up.railway.app/api/auth/logout", {}, { 
       withCredentials: true,
       // Note : 'credentials: "include"' est redondant quand on utilise déjà 'withCredentials: true' avec axios
     });
@@ -29,6 +29,6 @@ export const logout = async () => {
     localStorage.removeItem("token");
     window.dispatchEvent(new Event("userLoggedOut"));
     localStorage.setItem("logout", Date.now());
-    window.location.href = "frontend-visiocraft.vercel.app/login";
+    window.location.href = "https://frontend-visiocraft.vercel.app/login";
   }
 };
